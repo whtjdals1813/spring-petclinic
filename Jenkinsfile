@@ -27,11 +27,7 @@ pipeline {
                 echo 'Maven Build'
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
             }
-            post {
-                success {
-                    junit 'target/surefire-reports/**/*.xml'  // 경로 수정
-                }
-            }
+            //maven build 작업
         }
         stage('SSH Publish') {
             steps {
