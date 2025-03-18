@@ -53,6 +53,15 @@ pipeline {
                    '''
             }
         }
+        // Remote Docker Image
+        stage('Remove Docker Image') {
+            steps {
+                sh '''
+                   docker rmi spring-petclinic:$BUIlD_NUMBER
+                   docker rmi joseongmin/spring-petclinic:latest
+                   '''
+            }
+        }
         stage('SSH Publish') {
             steps {
                 echo 'ssh Puplish'
