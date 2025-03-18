@@ -29,6 +29,18 @@ pipeline {
             }
             //maven build 작업
         }
+        // docker Image  생성
+        stage('Docker Image Build') {
+            steps {
+                echo 'Docker Image Build'
+                dir("$env.WORKSPACE") {
+                    sh '''
+                       docker build -t spring-petclinic:$BUILD_NUMBER .
+                       docker tag spring-petclinic:$BUILD_NUMBER joseongmin/spring-petclinic:latest
+                       '''
+                }
+            }
+        }
         stage('SSH Publish') {
             steps {
                 echo 'ssh Puplish'
