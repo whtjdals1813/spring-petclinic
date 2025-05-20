@@ -7,6 +7,8 @@ pipeline {
     }
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerCredential')
+        REGION = "ap-northeast-2"
+        AWS_CREDENTIAL_NAME = "AWSCredentials"
     }
     
     stages {
@@ -60,30 +62,6 @@ pipeline {
                    docker rmi spring-petclinic:$BUILD_NUMBER
                    docker rmi joseongmin/spring-petclinic:latest
                    '''
-            }
-        }
-        stage('SSH Publish') {
-            steps {
-                echo 'ssh Puplish'
-                sshPublisher(publishers: [sshPublisherDesc(configName: 'target', 
-                transfers: [sshTransfer(cleanRemote: false, excludes: '', 
-                execCommand: '''
-                docker rm -f $(docker ps -aq)
-                docker rmi $(docker images -q)
-                docker run -d -p 8080:8080 --name spring-petclinic joseongmin/spring-petclinic:latest
-                ''',
-                execTimeout: 120000, 
-                flatten: false, 
-                makeEmptyDirs: false, 
-                noDefaultExcludes: false, 
-                patternSeparator: '[, ]+', 
-                remoteDirectory: '', 
-                remoteDirectorySDF: false, 
-                removePrefix: 'target', 
-                sourceFiles: 'target/*.jar')], 
-                usePromotionTimestamp: false, 
-                useWorkspaceInPromotion: false, verbose: false)])
-
             }
         }
     }
