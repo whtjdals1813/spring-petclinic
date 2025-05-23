@@ -70,7 +70,7 @@ pipeline {
                 dir("${env.WORKSPACE}") {
                     sh 'zip -r scripts.zip ./scripts appspec.yml'
                     withAWS(region:"${REGION}", credentials:"${AWS_CREDENTIAL_NAME}"){
-                      s3Upload(file:"scripts.zip", bucket:"user00-codedeploy-bucket")
+                      s3Upload(file:"scripts.zip", bucket:"project2-bucket-00")
                     } 
                     sh 'rm -rf ./deploy.zip'                 
                 }        
@@ -81,18 +81,18 @@ pipeline {
                echo "create Codedeploy group"   
                 sh '''
                     aws deploy create-deployment-group \
-                    --application-name user00-code-deploy \
-                    --auto-scaling-groups user00-asg \
-                    --deployment-group-name user00-code-deploy-${BUILD_NUMBER} \
+                    --application-name project2-app \
+                    --auto-scaling-groups project2-autoscaling-group \
+                    --deployment-group-name project2-production-in_place-${BUILD_NUMBER} \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
-                    --service-role-arn arn:aws:iam::257307634175:role/user00-codedeploy-service-role
+                    --service-role-arn arn:aws:iam::491085389788:role/project2-code-deploy-role
                     '''
                 echo "Codedeploy Workload"   
                 sh '''
-                    aws deploy create-deployment --application-name user00-code-deploy \
+                    aws deploy create-deployment --application-name project2-app \
                     --deployment-config-name CodeDeployDefault.OneAtATime \
-                    --deployment-group-name user00-code-deploy-${BUILD_NUMBER} \
-                    --s3-location bucket=user00-codedeploy-bucket,bundleType=zip,key=scripts.zip
+                    --deployment-group-name project2-production-in_place-${BUILD_NUMBER} \
+                    --s3-location bucket=project2-bucket-00,bundleType=zip,key=scripts.zip
                     '''
                     sleep(10) // sleep 10s
             }
