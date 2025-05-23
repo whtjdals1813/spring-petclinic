@@ -82,6 +82,15 @@ pipeline {
             steps {
                 echo "create Codedeploy group"
                 withAWS(region: "${REGION}", credentials: "${AWS_CREDENTIAL_NAME}") {
+                 // 애플리케이션 없으면 생성
+                    sh '''
+                        if ! aws deploy get-application --application-name project2-app > /dev/null 2>&1; then
+                          echo "Creating CodeDeploy application project2-app..."
+                          aws deploy create-application --application-name project2-app --compute-platform Server
+                        else
+                          echo "CodeDeploy application project2-app already exists. Skipping creation."
+                        fi
+                    '''
                     sh '''
                         aws deploy create-deployment-group \
                         --application-name project2-app \
